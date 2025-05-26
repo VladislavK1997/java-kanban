@@ -1,6 +1,6 @@
-package manager;
+package main.java.manager;
 
-import model.Task;
+import main.java.model.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
