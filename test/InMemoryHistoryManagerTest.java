@@ -1,9 +1,8 @@
-package test;
 
-import manager.HistoryManager;
-import manager.InMemoryHistoryManager;
-import model.Task;
-import model.TaskStatus;
+import main.java.manager.HistoryManager;
+import main.java.manager.InMemoryHistoryManager;
+import main.java.model.Task;
+import main.java.model.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;

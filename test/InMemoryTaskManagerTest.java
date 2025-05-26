@@ -1,11 +1,10 @@
-package test;
 
-import manager.InMemoryTaskManager;
-import manager.TaskManager;
-import model.Epic;
-import model.Subtask;
-import model.Task;
-import model.TaskStatus;
+import main.java.manager.InMemoryTaskManager;
+import main.java.manager.TaskManager;
+import main.java.model.Epic;
+import main.java.model.Subtask;
+import main.java.model.Task;
+import main.java.model.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
@@ -111,12 +110,13 @@ class InMemoryTaskManagerTest {
         Task task = new Task(1, "Task", "Description", TaskStatus.NEW);
         taskManager.addTask(task);
 
-        taskManager.getTask(1);
+        taskManager.getTask(1); // Добавляем в историю
         task.setName("Updated name");
         taskManager.updateTask(task);
 
-        Task fromHistory = taskManager.getHistory().getFirst();
+        Task fromHistory = taskManager.getHistory().get(0);
         assertEquals("Task", fromHistory.getName());
+        assertEquals("Updated name", taskManager.getTask(1).getName());
     }
 
     @Test
