@@ -46,8 +46,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
+        if (task == null) {
+            return;
+        }
+
         if (tasks.containsKey(task.getId())) {
-            tasks.put(task.getId(), task);
+            Task existing = tasks.get(task.getId());
+            existing.setName(task.getName());
+            existing.setDescription(task.getDescription());
+            existing.setStatus(task.getStatus());
         }
     }
 

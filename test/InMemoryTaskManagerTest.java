@@ -110,12 +110,13 @@ class InMemoryTaskManagerTest {
         Task task = new Task(1, "Task", "Description", TaskStatus.NEW);
         taskManager.addTask(task);
 
-        taskManager.getTask(1);
+        taskManager.getTask(1); // Добавляем в историю
         task.setName("Updated name");
         taskManager.updateTask(task);
 
-        Task fromHistory = taskManager.getHistory().getFirst();
+        Task fromHistory = taskManager.getHistory().get(0);
         assertEquals("Task", fromHistory.getName());
+        assertEquals("Updated name", taskManager.getTask(1).getName());
     }
 
     @Test
