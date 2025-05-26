@@ -1,4 +1,3 @@
-package test.manager.java;
 
 import main.java.manager.HistoryManager;
 import main.java.manager.InMemoryHistoryManager;
