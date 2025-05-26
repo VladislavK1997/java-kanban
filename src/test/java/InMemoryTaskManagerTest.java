@@ -1,4 +1,4 @@
-package test;
+package test.java;
 
 import manager.InMemoryTaskManager;
 import manager.TaskManager;
