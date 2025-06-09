@@ -17,6 +17,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getAllTasks() {
+
         return new ArrayList<>(tasks.values());
     }
 
@@ -129,6 +130,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Subtask> getAllSubtasks() {
+
         return new ArrayList<>(subtasks.values());
     }
 
@@ -167,12 +169,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubtask(Subtask subtask) {
-        Subtask existingSubtask = subtasks.get(subtask.getId());
-        if (existingSubtask != null) {
-            existingSubtask.setName(subtask.getName());
-            existingSubtask.setDescription(subtask.getDescription());
-            existingSubtask.setStatus(subtask.getStatus());
-            existingSubtask.setEpicId(subtask.getEpicId());
+        if (subtasks.containsKey(subtask.getId())) {
+            subtasks.put(subtask.getId(), subtask);
         }
     }
 
