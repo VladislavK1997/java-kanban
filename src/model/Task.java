@@ -15,7 +15,10 @@ public class Task {
         this.status = status;
     }
 
-    // Геттеры и сеттеры
+    public Task clone() {
+        return new Task(this.id, this.name, this.description, this.status);
+    }
+
     public int getId() {
         return id;
     }
