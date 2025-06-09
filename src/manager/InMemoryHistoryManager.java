@@ -1,14 +1,12 @@
-package main.java.manager;
+package manager;
 
-import main.java.model.Epic;
-import main.java.model.Subtask;
-import main.java.model.Task;
+import model.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InMemoryHistoryManager implements HistoryManager {
+public class    InMemoryHistoryManager implements HistoryManager {
     private static class Node {
         Task task;
         Node next;
@@ -27,10 +25,12 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        if (task == null) return;
+        if (task == null) {
+            return;
+        }
 
         remove(task.getId());
-        linkLast(deepCopy(task));
+        linkLast(task);
     }
 
     @Override
@@ -65,7 +65,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private void removeNode(Node node) {
-        if (node == null) return;
+        if (node == null) {
+            return;
+        }
 
         if (node.prev != null) {
             node.prev.next = node.next;
@@ -77,34 +79,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             node.next.prev = node.prev;
         } else {
             tail = node.prev;
-        }
-    }
-
-    private Task deepCopy(Task original) {
-        if (original == null) return null;
-
-        if (original instanceof Epic) {
-            Epic epic = (Epic) original;
-            Epic copy = new Epic(epic.getId(), epic.getName(), epic.getDescription());
-            copy.setStatus(epic.getStatus());
-            copy.getSubtaskIds().addAll(epic.getSubtaskIds());
-            return copy;
-        } else if (original instanceof Subtask) {
-            Subtask subtask = (Subtask) original;
-            return new Subtask(
-                    subtask.getId(),
-                    subtask.getName(),
-                    subtask.getDescription(),
-                    subtask.getStatus(),
-                    subtask.getEpicId()
-            );
-        } else {
-            return new Task(
-                    original.getId(),
-                    original.getName(),
-                    original.getDescription(),
-                    original.getStatus()
-            );
         }
     }
 }

@@ -1,11 +1,9 @@
-package main.java;
-
-import main.java.manager.InMemoryTaskManager;
-import main.java.manager.TaskManager;
-import main.java.model.Epic;
-import main.java.model.Subtask;
-import main.java.model.Task;
-import main.java.model.TaskStatus;
+import manager.InMemoryTaskManager;
+import manager.TaskManager;
+import model.Epic;
+import model.Subtask;
+import model.Task;
+import model.TaskStatus;
 
 import java.util.List;
 
