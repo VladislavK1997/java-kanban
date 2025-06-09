@@ -29,12 +29,10 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void add(Task task) {
         if (task == null) return;
 
-
         remove(task.getId());
-
-
-        linkLast(task);
+        linkLast(task.clone());
     }
+
 
     private void linkLast(Task task) {
         Node newNode = new Node(tail, task, null);
