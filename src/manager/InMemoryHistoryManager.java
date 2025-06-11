@@ -1,5 +1,7 @@
 package manager;
 
+import model.Epic;
+import model.Subtask;
 import model.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,78 +9,95 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private static class Node {
-        Task task;
-        Node next;
-        Node prev;
 
-        Node(Task task, Node prev, Node next) {
-            this.task = task;
-            this.prev = prev;
-            this.next = next;
-        }
-    }
-
-    private final Map<Integer, Node> historyMap = new HashMap<>();
-    private Node head;
-    private Node tail;
+    private final Map<Integer, Node<Task>> nodeMap = new HashMap<>();
+    private Node<Task> head;
+    private Node<Task> tail;
 
     @Override
     public void add(Task task) {
-        if (task == null) {
-            return;
-        }
+        if (task == null) return;
 
         remove(task.getId());
-        linkLast(task);
-    }
 
-    @Override
-    public void remove(int id) {
-        Node node = historyMap.get(id);
-        if (node != null) {
-            removeNode(node);
-            historyMap.remove(id);
-        }
+        Task taskCopy = copy(task);
+        Node<Task> newNode = linkLast(taskCopy);
+        nodeMap.put(task.getId(), newNode);
     }
 
     @Override
     public List<Task> getHistory() {
         List<Task> history = new ArrayList<>();
-        Node current = head;
+        Node<Task> current = head;
         while (current != null) {
-            history.add(current.task);
+            history.add(current.data);
             current = current.next;
         }
         return history;
     }
 
-    private void linkLast(Task task) {
-        final Node newNode = new Node(task, tail, null);
-        if (tail == null) {
-            head = newNode;
-        } else {
-            tail.next = newNode;
+    @Override
+    public void remove(int id) {
+        Node<Task> node = nodeMap.remove(id);
+        if (node != null) {
+            removeNode(node);
         }
-        tail = newNode;
-        historyMap.put(task.getId(), newNode);
     }
 
-    private void removeNode(Node node) {
-        if (node == null) {
-            return;
+    private Node<Task> linkLast(Task task) {
+        Node<Task> newNode = new Node<>(task, tail, null);
+        if (tail != null) {
+            tail.next = newNode;
+        } else {
+            head = newNode;
+        }
+        tail = newNode;
+        return newNode;
+    }
+
+    private void removeNode(Node<Task> node) {
+        Node<Task> prev = node.prev;
+        Node<Task> next = node.next;
+
+        if (prev != null) {
+            prev.next = next;
+        } else {
+            head = next;
         }
 
-        if (node.prev != null) {
-            node.prev.next = node.next;
+        if (next != null) {
+            next.prev = prev;
         } else {
-            head = node.next;
+            tail = prev;
+        }
+    }
+
+    private Task copy(Task task) {
+        if (task instanceof Epic epic) {
+            Epic copy = new Epic(epic.getId(), epic.getName(), epic.getDescription());
+            copy.setStatus(epic.getStatus());
+            epic.getSubtaskIds().forEach(copy::addSubtaskId);
+            return copy;
+        }
+        if (task instanceof Subtask subtask) {
+            Subtask copy = new Subtask(subtask.getId(), subtask.getName(), subtask.getDescription(),
+                    subtask.getStatus(), subtask.getEpicId());
+            return copy;
         }
 
-        if (node.next != null) {
-            node.next.prev = node.prev;
-        } else {
-            tail = node.prev;
+        Task copy = new Task(task.getId(), task.getName(), task.getDescription(), task.getStatus());
+        return copy;
+    }
+
+    private static class Node<T> {
+        public T data;
+        public Node<T> prev;
+        public Node<T> next;
+
+        public Node(T data, Node<T> prev, Node<T> next) {
+            this.data = data;
+            this.prev = prev;
+            this.next = next;
         }
     }
 }
