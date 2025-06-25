@@ -5,7 +5,8 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 import model.TaskStatus;
-
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Main {
@@ -13,8 +14,10 @@ public class Main {
         TaskManager taskManager = new InMemoryTaskManager();
 
         System.out.println("Создаем задачи...");
-        Task task1 = new Task(1, "Помыть посуду", "Помыть посуду вечером", TaskStatus.NEW);
-        Task task2 = new Task(2, "Сделать уроки", "Выполнить задания по математике", TaskStatus.IN_PROGRESS);
+        Task task1 = new Task(1, "Помыть посуду", "Помыть посуду вечером", TaskStatus.NEW,
+                Duration.ofMinutes(30), LocalDateTime.of(2025, 6, 25, 19, 0));
+        Task task2 = new Task(2, "Сделать уроки", "Выполнить задания по математике", TaskStatus.IN_PROGRESS,
+                Duration.ofMinutes(120), LocalDateTime.of(2025, 6, 25, 20, 0));
 
         taskManager.addTask(task1);
         taskManager.addTask(task2);
@@ -24,11 +27,11 @@ public class Main {
         taskManager.addEpic(epic1);
 
         Subtask subtask1 = new Subtask(4, "Собрать коробки", "Купить и собрать коробки для переезда",
-                TaskStatus.NEW, 3);
+                TaskStatus.NEW, 3, Duration.ofMinutes(60), LocalDateTime.of(2025, 6, 26, 9, 0));
         Subtask subtask2 = new Subtask(5, "Упаковать вещи", "Упаковать одежду и посуду",
-                TaskStatus.IN_PROGRESS, 3);
+                TaskStatus.IN_PROGRESS, 3, Duration.ofMinutes(180), LocalDateTime.of(2025, 6, 26, 10, 30));
         Subtask subtask3 = new Subtask(6, "Нанять грузчиков", "Найти грузчиков на день переезда",
-                TaskStatus.DONE, 3);
+                TaskStatus.DONE, 3, Duration.ofMinutes(30), LocalDateTime.of(2025, 6, 26, 14, 0));
 
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);

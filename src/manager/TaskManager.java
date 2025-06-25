@@ -7,47 +7,31 @@ import model.Task;
 import java.util.List;
 
 public interface TaskManager {
-
-    List<Task> getAllTasks();
-
-    void deleteAllTasks();
-
-    Task getTask(int id);
-
     Task addTask(Task task);
-
-    void updateTask(Task task);
-
-    void deleteTask(int id);
-
-
-    List<Epic> getAllEpics();
-
-    void deleteAllEpics();
-
-    Epic getEpic(int id);
-
     Epic addEpic(Epic epic);
-
-    void updateEpic(Epic epic);
-
-    void deleteEpic(int id);
-
-    List<Subtask> getEpicSubtasks(int epicId);
-
-
-    List<Subtask> getAllSubtasks();
-
-    void deleteAllSubtasks();
-
-    Subtask getSubtask(int id);
-
     Subtask addSubtask(Subtask subtask);
 
+    Task getTask(int id);
+    Epic getEpic(int id);
+    Subtask getSubtask(int id);
+
+    void updateTask(Task task);
+    void updateEpic(Epic epic);
     void updateSubtask(Subtask subtask);
 
+    void deleteTask(int id);
+    void deleteEpic(int id);
     void deleteSubtask(int id);
 
+    List<Task> getAllTasks();
+    List<Epic> getAllEpics();
+    List<Subtask> getAllSubtasks();
+
+    void deleteAllTasks();
+    void deleteAllEpics();
+    void deleteAllSubtasks();
 
     List<Task> getHistory();
+    List<Task> getPrioritizedTasks();
+    List<Subtask> getEpicSubtasks(int epicId);
 }
