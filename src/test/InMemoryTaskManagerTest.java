@@ -53,11 +53,9 @@ public class InMemoryTaskManagerTest {
         Epic retrievedEpic = manager.getEpic(10);
         assertNotNull(retrievedEpic);
 
-        // Проверяем, что подзадачи добавились в эпик
         assertTrue(retrievedEpic.getSubtaskIds().contains(11));
         assertTrue(retrievedEpic.getSubtaskIds().contains(12));
 
-        // Проверяем расчет времени эпика (длительность, начало, конец)
         assertEquals(Duration.ofMinutes(75), retrievedEpic.getDuration());
         assertEquals(LocalDateTime.of(2025, 6, 26, 9, 0), retrievedEpic.getStartTime());
         assertEquals(LocalDateTime.of(2025, 6, 26, 10, 45), retrievedEpic.getEndTime());
@@ -108,7 +106,7 @@ public class InMemoryTaskManagerTest {
 
         manager.getTask(1);
         manager.getTask(2);
-        manager.getTask(1); // повторный вызов должен переместить задачу в конец истории
+        manager.getTask(1);
 
         List<Task> history = manager.getHistory();
 
