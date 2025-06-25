@@ -137,11 +137,17 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getAllTasks() { return new ArrayList<>(tasks.values()); }
+    public List<Task> getAllTasks() {
+        return new ArrayList<>(tasks.values());
+    }
     @Override
-    public List<Epic> getAllEpics() { return new ArrayList<>(epics.values()); }
+    public List<Epic> getAllEpics() {
+        return new ArrayList<>(epics.values());
+    }
     @Override
-    public List<Subtask> getAllSubtasks() { return new ArrayList<>(subtasks.values()); }
+    public List<Subtask> getAllSubtasks() {
+        return new ArrayList<>(subtasks.values());
+    }
 
     @Override
     public void deleteAllTasks() {
@@ -170,10 +176,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getHistory() { return history.getHistory(); }
+    public List<Task> getHistory() {
+        return history.getHistory();
+    }
 
     @Override
-    public List<Task> getPrioritizedTasks() { return new ArrayList<>(prioritized); }
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritized);
+    }
 
     @Override
     public List<Subtask> getEpicSubtasks(int epicId) {
