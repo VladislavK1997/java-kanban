@@ -21,7 +21,6 @@ public class InMemoryTaskManager implements TaskManager {
     private final HistoryManager history = new InMemoryHistoryManager();
     protected int nextId = 1;
 
-    // Проверка пересечения по времени
     private boolean intersects(Task task) {
         return prioritized.stream()
                 .anyMatch(t -> t.getId() != task.getId()
