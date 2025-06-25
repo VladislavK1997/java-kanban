@@ -1,5 +1,7 @@
 package manager;
 
+import model.Epic;
+import model.Subtask;
 import model.Task;
 
 import java.util.*;
@@ -11,9 +13,24 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
+        if (task == null) {
+            return;
+        }
+
         remove(task.getId());
-        linkLast(task);
+
+        Task taskCopy;
+        if (task instanceof Epic) {
+            taskCopy = new Epic((Epic) task);
+        } else if (task instanceof Subtask) {
+            taskCopy = new Subtask((Subtask) task);
+        } else {
+            taskCopy = new Task(task);
+        }
+
+        linkLast(taskCopy);
     }
+
 
     @Override
     public List<Task> getHistory() {

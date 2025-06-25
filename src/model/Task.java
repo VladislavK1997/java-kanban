@@ -26,6 +26,9 @@ public class Task {
     public Task(int id, String name, String description, TaskStatus status) {
         this(id, name, description, status, null, null);
     }
+    public Task(Task other) {
+        this(other.id, other.name, other.description, other.status, other.duration, other.startTime);
+    }
 
     public int getId() {
         return id;
