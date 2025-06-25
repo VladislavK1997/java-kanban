@@ -15,9 +15,17 @@ public class Epic extends Task {
         super(id, name, description, TaskStatus.NEW, Duration.ZERO, null);
     }
 
-    public List<Integer> getSubtaskIds() { return subtaskIds; }
-    public void addSubtaskId(int id) { subtaskIds.add(id); }
-    public void removeSubtaskId(int id) { subtaskIds.remove(Integer.valueOf(id)); }
+    public List<Integer> getSubtaskIds() {
+        return subtaskIds;
+    }
+
+    public void addSubtaskId(int id) {
+        subtaskIds.add(id);
+    }
+
+    public void removeSubtaskId(int id) {
+        subtaskIds.remove(Integer.valueOf(id));
+    }
 
     public void updateTimeAndDuration(List<Subtask> subtasks) {
         if (subtasks == null || subtasks.isEmpty()) {
@@ -41,8 +49,16 @@ public class Epic extends Task {
         endTime = latest;
     }
 
-    @Override public Duration getDuration() { return duration; }
-    @Override public LocalDateTime getStartTime() { return startTime; }
-    public LocalDateTime getEndTime() { return endTime; }
+    @Override public Duration getDuration() {
+        return duration;
+    }
+
+    @Override public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
 }
 
