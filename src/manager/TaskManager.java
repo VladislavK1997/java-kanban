@@ -7,11 +7,11 @@ import model.Task;
 import java.util.List;
 
 public interface TaskManager {
-    Task addTask(Task task);
+    Task addTask(Task task) throws TaskIntersectionException;
 
     Epic addEpic(Epic epic);
 
-    Subtask addSubtask(Subtask subtask);
+    Subtask addSubtask(Subtask subtask) throws TaskIntersectionException;
 
     Task getTask(int id);
 
@@ -19,11 +19,11 @@ public interface TaskManager {
 
     Subtask getSubtask(int id);
 
-    void updateTask(Task task);
+    void updateTask(Task task) throws TaskIntersectionException;
 
     void updateEpic(Epic epic);
 
-    void updateSubtask(Subtask subtask);
+    void updateSubtask(Subtask subtask) throws TaskIntersectionException;
 
     void deleteTask(int id);
 

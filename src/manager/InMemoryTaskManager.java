@@ -12,7 +12,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Subtask> subtasks = new HashMap<>();
     protected final Map<Integer, Epic> epics = new HashMap<>();
 
-    private final NavigableSet<Task> prioritized = new TreeSet<>(
+    private final Set<Task> prioritized = new TreeSet<>(
             Comparator.<Task, LocalDateTime>comparing(t -> Optional.ofNullable(t.getStartTime())
                             .orElse(LocalDateTime.MAX))
                     .thenComparingInt(Task::getId)
@@ -35,12 +35,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task addTask(Task task) {
+    public Task addTask(Task task) throws TaskIntersectionException {
         if (task.getId() == 0) {
             task.setId(nextId++);
         }
         if (intersects(task)) {
-            throw new IllegalArgumentException("пересекается");
+            throw new TaskIntersectionException("Время задачи пересекается с существующей");
         }
         tasks.put(task.getId(), task);
         if (task.getStartTime() != null) {
@@ -59,7 +59,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Subtask addSubtask(Subtask subtask) {
+    public Subtask addSubtask(Subtask subtask) throws TaskIntersectionException {
         if (!epics.containsKey(subtask.getEpicId())) {
             throw new IllegalArgumentException();
         }
@@ -67,7 +67,7 @@ public class InMemoryTaskManager implements TaskManager {
             subtask.setId(nextId++);
         }
         if (intersects(subtask)) {
-            throw new IllegalArgumentException("пересекается");
+            throw new TaskIntersectionException("Время задачи пересекается с существующей");
         }
         subtasks.put(subtask.getId(), subtask);
         epics.get(subtask.getEpicId()).addSubtaskId(subtask.getId());
@@ -113,12 +113,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(Task task) {
-        if (!tasks.containsKey(task.getId())) {
+    public void updateTask(Task task) throws TaskIntersectionException {
+        if (!exists(task)) {
             throw new NoSuchElementException();
         }
         if (intersects(task)) {
-            throw new IllegalArgumentException("пересекается");
+            throw new TaskIntersectionException("Время задачи пересекается с существующей");
         }
         Task old = tasks.get(task.getId());
         if (old.getStartTime() != null) {
@@ -139,12 +139,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) throws TaskIntersectionException {
         if (!subtasks.containsKey(subtask.getId())) {
             throw new NoSuchElementException();
         }
         if (intersects(subtask)) {
-            throw new IllegalArgumentException("пересекается");
+            throw new TaskIntersectionException("Время задачи пересекается с существующей");
         }
         Subtask old = subtasks.get(subtask.getId());
         if (old.getStartTime() != null) {
@@ -251,5 +251,9 @@ public class InMemoryTaskManager implements TaskManager {
         return subtasks.values().stream()
                 .filter(s -> s.getEpicId() == epicId)
                 .collect(Collectors.toList());
+    }
+
+    private boolean exists(Task task) {
+        return tasks.containsKey(task.getId());
     }
 }

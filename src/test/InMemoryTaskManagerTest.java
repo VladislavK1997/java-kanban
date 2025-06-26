@@ -1,6 +1,7 @@
 package test;
 
 import manager.InMemoryTaskManager;
+import manager.TaskIntersectionException;
 import manager.TaskManager;
 import model.Epic;
 import model.Subtask;
@@ -25,7 +26,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldAddAndGetTask() {
+    void shouldAddAndGetTask() throws TaskIntersectionException {
         Task task = new Task(1, "Task1", "Desc1", TaskStatus.NEW,
                 Duration.ofMinutes(60), LocalDateTime.of(2025, 6, 25, 10, 0));
         manager.addTask(task);
@@ -38,7 +39,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldAddAndGetEpicWithSubtasks() {
+    void shouldAddAndGetEpicWithSubtasks() throws TaskIntersectionException {
         Epic epic = new Epic(10, "Epic1", "DescEpic");
         manager.addEpic(epic);
 
@@ -62,7 +63,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldUpdateTask() {
+    void shouldUpdateTask() throws TaskIntersectionException {
         Task task = new Task(1, "Task1", "Desc1", TaskStatus.NEW,
                 Duration.ofMinutes(60), LocalDateTime.of(2025, 6, 25, 10, 0));
         manager.addTask(task);
@@ -80,7 +81,7 @@ public class InMemoryTaskManagerTest {
 
 
     @Test
-    void shouldThrowOnIntersectingTasks() {
+    void shouldThrowOnIntersectingTasks() throws TaskIntersectionException {
         Task task1 = new Task(1, "Task1", "Desc1", TaskStatus.NEW,
                 Duration.ofMinutes(60), LocalDateTime.of(2025, 6, 25, 10, 0));
         manager.addTask(task1);
@@ -95,7 +96,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldReturnHistoryInOrder() {
+    void shouldReturnHistoryInOrder() throws TaskIntersectionException {
         Task task1 = new Task(1, "Task1", "Desc1", TaskStatus.NEW,
                 Duration.ofMinutes(10), LocalDateTime.of(2025, 6, 25, 9, 0));
         Task task2 = new Task(2, "Task2", "Desc2", TaskStatus.NEW,
@@ -116,7 +117,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldReturnPrioritizedTasksSortedByStartTime() {
+    void shouldReturnPrioritizedTasksSortedByStartTime() throws TaskIntersectionException {
         Task task1 = new Task(1, "Task1", "Desc1", TaskStatus.NEW,
                 Duration.ofMinutes(10), LocalDateTime.of(2025, 6, 25, 11, 0));
         Task task2 = new Task(2, "Task2", "Desc2", TaskStatus.NEW,
@@ -136,7 +137,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void deletingEpicRemovesSubtasks() {
+    void deletingEpicRemovesSubtasks() throws TaskIntersectionException {
         Epic epic = new Epic(100, "Epic100", "DescEpic");
         manager.addEpic(epic);
 

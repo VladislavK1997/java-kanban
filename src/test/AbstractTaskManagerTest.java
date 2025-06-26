@@ -1,5 +1,6 @@
 package test;
 
+import manager.TaskIntersectionException;
 import manager.TaskManager;
 import model.Epic;
 import model.Subtask;
@@ -25,7 +26,7 @@ public abstract class AbstractTaskManagerTest {
     protected abstract TaskManager createTaskManager();
 
     @Test
-    void addAndGetTask() {
+    void addAndGetTask() throws TaskIntersectionException {
         Task task = new Task(0, "Task1", "Desc", TaskStatus.NEW);
         Task saved = manager.addTask(task);
         assertNotNull(saved);
@@ -45,7 +46,7 @@ public abstract class AbstractTaskManagerTest {
     }
 
     @Test
-    void addAndGetSubtask() {
+    void addAndGetSubtask() throws TaskIntersectionException {
         Epic epic = manager.addEpic(new Epic(0, "Epic1", "Desc"));
         Subtask subtask = new Subtask(0, "Subtask1", "Desc", TaskStatus.NEW, epic.getId());
         Subtask saved = manager.addSubtask(subtask);
@@ -57,7 +58,7 @@ public abstract class AbstractTaskManagerTest {
     }
 
     @Test
-    void updateTask() {
+    void updateTask() throws TaskIntersectionException {
         Task task = manager.addTask(new Task(0, "Task1", "Desc", TaskStatus.NEW));
         task.setName("Updated");
         manager.updateTask(task);
@@ -75,7 +76,7 @@ public abstract class AbstractTaskManagerTest {
     }
 
     @Test
-    void updateSubtask() {
+    void updateSubtask() throws TaskIntersectionException {
         Epic epic = manager.addEpic(new Epic(0, "Epic1", "Desc"));
         Subtask subtask = manager.addSubtask(new Subtask(0, "Subtask1", "Desc", TaskStatus.NEW, epic.getId()));
         subtask.setName("UpdatedSubtask");
@@ -85,14 +86,14 @@ public abstract class AbstractTaskManagerTest {
     }
 
     @Test
-    void deleteTask() {
+    void deleteTask() throws TaskIntersectionException {
         Task task = manager.addTask(new Task(0, "Task1", "Desc", TaskStatus.NEW));
         manager.deleteTask(task.getId());
         assertNull(manager.getTask(task.getId()));
     }
 
     @Test
-    void deleteEpicAndSubtasks() {
+    void deleteEpicAndSubtasks() throws TaskIntersectionException {
         Epic epic = manager.addEpic(new Epic(0, "Epic1", "Desc"));
         Subtask subtask = manager.addSubtask(new Subtask(0, "Subtask1", "Desc", TaskStatus.NEW, epic.getId()));
         manager.deleteEpic(epic.getId());
@@ -101,7 +102,7 @@ public abstract class AbstractTaskManagerTest {
     }
 
     @Test
-    void getAllTasks() {
+    void getAllTasks() throws TaskIntersectionException {
         manager.addTask(new Task(0, "Task1", "Desc", TaskStatus.NEW));
         manager.addTask(new Task(0, "Task2", "Desc", TaskStatus.NEW));
         List<Task> tasks = manager.getAllTasks();
@@ -117,7 +118,7 @@ public abstract class AbstractTaskManagerTest {
     }
 
     @Test
-    void getAllSubtasks() {
+    void getAllSubtasks() throws TaskIntersectionException {
         Epic epic = manager.addEpic(new Epic(0, "Epic1", "Desc"));
         manager.addSubtask(new Subtask(0, "Subtask1", "Desc", TaskStatus.NEW, epic.getId()));
         manager.addSubtask(new Subtask(0, "Subtask2", "Desc", TaskStatus.NEW, epic.getId()));
@@ -126,7 +127,7 @@ public abstract class AbstractTaskManagerTest {
     }
 
     @Test
-    void getSubtasksOfEpic() {
+    void getSubtasksOfEpic() throws TaskIntersectionException {
         Epic epic = manager.addEpic(new Epic(0, "Epic1", "Desc"));
         Subtask s1 = manager.addSubtask(new Subtask(0, "Subtask1", "Desc", TaskStatus.NEW, epic.getId()));
         Subtask s2 = manager.addSubtask(new Subtask(0, "Subtask2", "Desc", TaskStatus.NEW, epic.getId()));
@@ -137,7 +138,7 @@ public abstract class AbstractTaskManagerTest {
     }
 
     @Test
-    void historyTracksAccessedTasks() {
+    void historyTracksAccessedTasks() throws TaskIntersectionException {
         Task task = manager.addTask(new Task(0, "Task1", "Desc", TaskStatus.NEW));
         Epic epic = manager.addEpic(new Epic(0, "Epic1", "Desc"));
         Subtask subtask = manager.addSubtask(new Subtask(0, "Subtask1", "Desc", TaskStatus.NEW, epic.getId()));
@@ -154,7 +155,7 @@ public abstract class AbstractTaskManagerTest {
     }
 
     @Test
-    void clearAllTasks() {
+    void clearAllTasks() throws TaskIntersectionException {
         manager.addTask(new Task(0, "Task1", "Desc", TaskStatus.NEW));
         manager.deleteAllTasks();
         List<Task> tasks = manager.getAllTasks();
@@ -162,7 +163,7 @@ public abstract class AbstractTaskManagerTest {
     }
 
     @Test
-    void clearAllEpicsAndSubtasks() {
+    void clearAllEpicsAndSubtasks() throws TaskIntersectionException {
         Epic epic = manager.addEpic(new Epic(0, "Epic1", "Desc"));
         manager.addSubtask(new Subtask(0, "Subtask1", "Desc", TaskStatus.NEW, epic.getId()));
 

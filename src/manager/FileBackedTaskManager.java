@@ -33,7 +33,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 writer.newLine();
             }
         } catch (IOException e) {
-            throw new ManagerSaveException("Failed to save tasks to file", e);
+            throw new ManagerSaveException("Не удалось сохранить задачи в файл", e);
         }
     }
 
@@ -57,7 +57,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 manager.nextId = Math.max(manager.nextId, task.getId() + 1);
             }
         } catch (IOException e) {
-            throw new ManagerSaveException("Failed to load from file", e);
+            throw new ManagerSaveException("Не удалось загрузить из файла", e);
         }
         return manager;
     }
@@ -91,7 +91,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Task addTask(Task task) {
+    public Task addTask(Task task) throws TaskIntersectionException {
         Task t = super.addTask(task);
         save();
         return t;
@@ -105,14 +105,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Subtask addSubtask(Subtask subtask) {
+    public Subtask addSubtask(Subtask subtask) throws TaskIntersectionException {
         Subtask s = super.addSubtask(subtask);
         save();
         return s;
     }
 
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws TaskIntersectionException {
         super.updateTask(task);
         save();
     }
@@ -124,7 +124,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) throws TaskIntersectionException {
         super.updateSubtask(subtask);
         save();
     }
@@ -165,17 +165,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
-    public static void main(String[] args) {
-        File file = new File("tasks.csv");
+    public static void main(String[] args) throws TaskIntersectionException {
+        File file = new File("задачи.csv");
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
 
-        manager.addTask(new Task(0, "Task1", "Do something", TaskStatus.NEW));
+        manager.addTask(new Task(0, "Task1", "Сделайте что-нибудь", TaskStatus.NEW));
         Epic epic = manager.addEpic(new Epic(0, "Epic1", "Epic desc"));
-        manager.addSubtask(new Subtask(0, "Sub1", "Sub desc", TaskStatus.NEW, epic.getId()));
+        manager.addSubtask(new Subtask(0, "Sub1", "Дополнительное описание", TaskStatus.NEW, epic.getId()));
 
         FileBackedTaskManager loaded = FileBackedTaskManager.loadFromFile(file);
-        System.out.println("Loaded tasks: " + loaded.getAllTasks());
-        System.out.println("Loaded epics: " + loaded.getAllEpics());
-        System.out.println("Loaded subtasks: " + loaded.getAllSubtasks());
+        System.out.println("Загруженные задачи: " + loaded.getAllTasks());
+        System.out.println("Загруженные эпики: " + loaded.getAllEpics());
+        System.out.println("Загруженные подзадачи: " + loaded.getAllSubtasks());
     }
 }

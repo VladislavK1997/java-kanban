@@ -1,5 +1,5 @@
-
 import manager.InMemoryTaskManager;
+import manager.TaskIntersectionException;
 import manager.TaskManager;
 import model.Epic;
 import model.Subtask;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws TaskIntersectionException {
         TaskManager taskManager = new InMemoryTaskManager();
 
         System.out.println("Создаем задачи...");
