@@ -1,21 +1,36 @@
 package model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
-    protected int id;
-    protected String name;
-    protected String description;
-    protected TaskStatus status;
 
-    public Task(int id, String name, String description, TaskStatus status) {
+    private int id;
+    private String name;
+    private String description;
+    private TaskStatus status;
+    private Duration duration;
+    private LocalDateTime startTime;
+
+    public Task(int id, String name, String description,
+                TaskStatus status, Duration duration, LocalDateTime startTime) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
-    // Геттеры и сеттеры
+    public Task(int id, String name, String description, TaskStatus status) {
+        this(id, name, description, status, null, null);
+    }
+
+    public Task(Task other) {
+        this(other.id, other.name, other.description, other.status, other.duration, other.startTime);
+    }
+
     public int getId() {
         return id;
     }
@@ -48,27 +63,55 @@ public class Task {
         this.status = status;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
-        return id == task.id && Objects.equals(name, task.name) &&
-                Objects.equals(description, task.description) && status == task.status;
+    public Duration getDuration() {
+        return duration;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, description, status);
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null || duration == null) {
+            return null;
+        }
+        return startTime.plus(duration);
     }
 
     @Override
     public String toString() {
-        return "Task{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                '}';
+        return "Task{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", description='" + description + '\''
+                + ", status=" + status
+                + ", duration=" + (duration != null ? duration.toMinutes() + " mins" : "null")
+                + ", startTime=" + startTime
+                + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Task)) {
+            return false;
+        }
+        Task task = (Task) o;
+        return id == task.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
