@@ -79,7 +79,6 @@ public class InMemoryTaskManagerTest {
         assertEquals(LocalDateTime.of(2025, 6, 25, 11, 0), retrieved.getStartTime());
     }
 
-
     @Test
     void shouldThrowOnIntersectingTasks() throws TaskIntersectionException {
         Task task1 = new Task(1, "Task1", "Desc1", TaskStatus.NEW,
@@ -89,7 +88,7 @@ public class InMemoryTaskManagerTest {
         Task task2 = new Task(2, "Task2", "Desc2", TaskStatus.NEW,
                 Duration.ofMinutes(30), LocalDateTime.of(2025, 6, 25, 10, 30));
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        TaskIntersectionException exception = assertThrows(TaskIntersectionException.class, () -> {
             manager.addTask(task2);
         });
         assertTrue(exception.getMessage().contains("пересекается"));
