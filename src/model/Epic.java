@@ -7,8 +7,7 @@ import java.util.List;
 
 public class Epic extends Task {
     private final List<Integer> subtaskIds = new ArrayList<>();
-    private Duration duration = Duration.ZERO;
-    private LocalDateTime startTime;
+
     private LocalDateTime endTime;
 
     public Epic(int id, String name, String description) {
@@ -17,8 +16,8 @@ public class Epic extends Task {
 
     public Epic(Epic other) {
         super(other.getId(), other.getName(), other.getDescription(), other.getStatus(), other.getDuration(), other.getStartTime());
-        this.getSubtaskIds().addAll(other.getSubtaskIds());
-        this.updateTimeAndDuration(null);
+        this.subtaskIds.addAll(other.getSubtaskIds());
+        this.endTime = other.getEndTime();
     }
 
     public List<Integer> getSubtaskIds() {
@@ -35,8 +34,8 @@ public class Epic extends Task {
 
     public void updateTimeAndDuration(List<Subtask> subtasks) {
         if (subtasks == null || subtasks.isEmpty()) {
-            duration = Duration.ZERO;
-            startTime = null;
+            super.setDuration(Duration.ZERO);
+            super.setStartTime(null);
             endTime = null;
             return;
         }
@@ -50,22 +49,23 @@ public class Epic extends Task {
             LocalDateTime end = s.getEndTime();
             if (latest == null || (end != null && end.isAfter(latest))) latest = end;
         }
-        duration = total;
-        startTime = earliest;
+        super.setDuration(total);
+        super.setStartTime(earliest);
         endTime = latest;
     }
 
     @Override
     public Duration getDuration() {
-        return duration;
+        return super.getDuration();
     }
 
     @Override
     public LocalDateTime getStartTime() {
-        return startTime;
+        return super.getStartTime();
     }
 
     public LocalDateTime getEndTime() {
         return endTime;
     }
 }
+
