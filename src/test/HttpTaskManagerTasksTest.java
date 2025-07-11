@@ -54,11 +54,9 @@ public class HttpTaskManagerTasksTest {
         Task task = new Task(0, "Another Task", "Desc", TaskStatus.NEW,
                 Duration.ofMinutes(15), LocalDateTime.now());
 
-        Task created = gson.fromJson(postTask(task).body(), Task.class);
-        HttpResponse<String> response = getTaskById(created.getId());
+        Task created = createTask(task);
+        Task fetched = fetchTaskById(created.getId());
 
-        assertEquals(200, response.statusCode());
-        Task fetched = gson.fromJson(response.body(), Task.class);
         assertEquals(created, fetched);
     }
 
@@ -92,5 +90,16 @@ public class HttpTaskManagerTasksTest {
                 .DELETE()
                 .build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+    private Task createTask(Task task) throws IOException, InterruptedException {
+        HttpResponse<String> response = postTask(task);
+        assertEquals(201, response.statusCode(), "Expected 201 Created");
+        return gson.fromJson(response.body(), Task.class);
+    }
+
+    private Task fetchTaskById(int id) throws IOException, InterruptedException {
+        HttpResponse<String> response = getTaskById(id);
+        assertEquals(200, response.statusCode(), "Expected 200 OK");
+        return gson.fromJson(response.body(), Task.class);
     }
 }
