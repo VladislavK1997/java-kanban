@@ -1,6 +1,5 @@
 package http;
 
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
@@ -37,17 +36,25 @@ public class HttpTaskServer {
         this.gson = getGson();
         server = HttpServer.create(new InetSocketAddress(PORT), 0);
 
+        server.createContext("/tasks", this::handleAllTasks);
         server.createContext("/tasks/task", this::handleTasks);
         server.createContext("/tasks/subtask", this::handleSubtasks);
         server.createContext("/tasks/epic", this::handleEpics);
         server.createContext("/tasks/history", this::handleHistory);
         server.createContext("/tasks/prioritized", this::handlePrioritized);
-
     }
 
     public void start() {
         server.start();
         System.out.println("HTTP server started on port " + PORT);
+    }
+
+    private void handleAllTasks(HttpExchange exchange) throws IOException {
+        if (!exchange.getRequestMethod().equals("GET")) {
+            sendResponse(exchange, 405, "Method not allowed");
+            return;
+        }
+        sendResponse(exchange, 200, gson.toJson(taskManager.getPrioritizedTasks()));
     }
 
     private void handleTasks(HttpExchange exchange) throws IOException {
@@ -57,12 +64,11 @@ public class HttpTaskServer {
         switch (method) {
             case "GET" -> {
                 if (query == null) {
-                    List<Task> tasks = taskManager.getAllTasks();
-                    sendResponse(exchange, 200, gson.toJson(tasks));
+                    sendResponse(exchange, 200, gson.toJson(taskManager.getAllTasks()));
                 } else {
                     Integer id = parseIdFromQuery(query);
                     if (id == null) {
-                        sendResponse(exchange, 400, "Invalid id");
+                        sendResponse(exchange, 400, "Invalid id format");
                         return;
                     }
                     Task task = taskManager.getTask(id);
@@ -81,14 +87,10 @@ public class HttpTaskServer {
                     return;
                 }
                 try {
-                    if (task.getId() == 0) {
+                    if (taskManager.getTask(task.getId()) == null) {
                         Task created = taskManager.addTask(task);
                         sendResponse(exchange, 201, gson.toJson(created));
                     } else {
-                        if (taskManager.getTask(task.getId()) == null) {
-                            sendResponse(exchange, 404, "Task not found");
-                            return;
-                        }
                         taskManager.updateTask(task);
                         sendResponse(exchange, 200, gson.toJson(task));
                     }
@@ -103,7 +105,7 @@ public class HttpTaskServer {
                 } else {
                     Integer id = parseIdFromQuery(query);
                     if (id == null) {
-                        sendResponse(exchange, 400, "Invalid id");
+                        sendResponse(exchange, 400, "Invalid id format");
                         return;
                     }
                     taskManager.deleteTask(id);
@@ -121,12 +123,11 @@ public class HttpTaskServer {
         switch (method) {
             case "GET" -> {
                 if (query == null) {
-                    List<Subtask> subtasks = taskManager.getAllSubtasks();
-                    sendResponse(exchange, 200, gson.toJson(subtasks));
+                    sendResponse(exchange, 200, gson.toJson(taskManager.getAllSubtasks()));
                 } else {
                     Integer id = parseIdFromQuery(query);
                     if (id == null) {
-                        sendResponse(exchange, 400, "Invalid id");
+                        sendResponse(exchange, 400, "Invalid id format");
                         return;
                     }
                     Subtask subtask = taskManager.getSubtask(id);
@@ -145,14 +146,10 @@ public class HttpTaskServer {
                     return;
                 }
                 try {
-                    if (subtask.getId() == 0) {
+                    if (taskManager.getSubtask(subtask.getId()) == null) {
                         Subtask created = taskManager.addSubtask(subtask);
                         sendResponse(exchange, 201, gson.toJson(created));
                     } else {
-                        if (taskManager.getSubtask(subtask.getId()) == null) {
-                            sendResponse(exchange, 404, "Subtask not found");
-                            return;
-                        }
                         taskManager.updateSubtask(subtask);
                         sendResponse(exchange, 200, gson.toJson(subtask));
                     }
@@ -167,7 +164,7 @@ public class HttpTaskServer {
                 } else {
                     Integer id = parseIdFromQuery(query);
                     if (id == null) {
-                        sendResponse(exchange, 400, "Invalid id");
+                        sendResponse(exchange, 400, "Invalid id format");
                         return;
                     }
                     taskManager.deleteSubtask(id);
@@ -185,12 +182,11 @@ public class HttpTaskServer {
         switch (method) {
             case "GET" -> {
                 if (query == null) {
-                    List<Epic> epics = taskManager.getAllEpics();
-                    sendResponse(exchange, 200, gson.toJson(epics));
+                    sendResponse(exchange, 200, gson.toJson(taskManager.getAllEpics()));
                 } else {
                     Integer id = parseIdFromQuery(query);
                     if (id == null) {
-                        sendResponse(exchange, 400, "Invalid id");
+                        sendResponse(exchange, 400, "Invalid id format");
                         return;
                     }
                     Epic epic = taskManager.getEpic(id);
@@ -209,14 +205,10 @@ public class HttpTaskServer {
                     return;
                 }
                 try {
-                    if (epic.getId() == 0) {
+                    if (taskManager.getEpic(epic.getId()) == null) {
                         Epic created = taskManager.addEpic(epic);
                         sendResponse(exchange, 201, gson.toJson(created));
                     } else {
-                        if (taskManager.getEpic(epic.getId()) == null) {
-                            sendResponse(exchange, 404, "Epic not found");
-                            return;
-                        }
                         taskManager.updateEpic(epic);
                         sendResponse(exchange, 200, gson.toJson(epic));
                     }
@@ -231,7 +223,7 @@ public class HttpTaskServer {
                 } else {
                     Integer id = parseIdFromQuery(query);
                     if (id == null) {
-                        sendResponse(exchange, 400, "Invalid id");
+                        sendResponse(exchange, 400, "Invalid id format");
                         return;
                     }
                     taskManager.deleteEpic(id);
@@ -277,7 +269,7 @@ public class HttpTaskServer {
 
     private void sendResponse(HttpExchange exchange, int code, String response) throws IOException {
         byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
-        exchange.getResponseHeaders().add("Content-Type", "application/json; charset=UTF-8");
+        exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
         exchange.sendResponseHeaders(code, bytes.length);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(bytes);
