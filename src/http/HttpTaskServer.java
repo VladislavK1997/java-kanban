@@ -290,12 +290,9 @@ public class HttpTaskServer {
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .create();
     }
+
     public void stop() {
         server.stop(0);
         System.out.println("HTTP server stopped");
     }
 }
-
-
-
-
