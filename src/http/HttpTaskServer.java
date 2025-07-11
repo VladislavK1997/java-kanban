@@ -50,11 +50,6 @@ public class HttpTaskServer {
         System.out.println("HTTP server started on port " + PORT);
     }
 
-    public void stop() {
-        server.stop(0);
-        System.out.println("HTTP server stopped");
-    }
-
     private void handleTasks(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
         String query = exchange.getRequestURI().getQuery();
@@ -295,7 +290,10 @@ public class HttpTaskServer {
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .create();
     }
-
+    public void stop() {
+        server.stop(0);
+        System.out.println("HTTP server stopped");
+    }
 }
 
 

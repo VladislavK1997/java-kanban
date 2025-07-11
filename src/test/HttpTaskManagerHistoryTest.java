@@ -57,7 +57,6 @@ class HttpTaskManagerHistoryTest {
         Task task = new Task(1, "Task", "Description", TaskStatus.NEW,
                 Duration.ofMinutes(30), LocalDateTime.now());
 
-        // Добавляем задачу
         HttpRequest postRequest = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/tasks/task/"))
                 .header("Content-Type", "application/json")
@@ -66,7 +65,6 @@ class HttpTaskManagerHistoryTest {
         HttpResponse<String> postResponse = client.send(postRequest, HttpResponse.BodyHandlers.ofString());
         assertEquals(201, postResponse.statusCode());
 
-        // Запрашиваем задачу (добавляет в историю)
         HttpRequest getRequest = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/tasks/task/?id=1"))
                 .GET()
@@ -74,7 +72,6 @@ class HttpTaskManagerHistoryTest {
         HttpResponse<String> getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, getResponse.statusCode());
 
-        // Запрашиваем историю
         HttpRequest historyRequest = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/tasks/history"))
                 .GET()
