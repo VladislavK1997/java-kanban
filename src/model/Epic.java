@@ -55,12 +55,13 @@ public class Epic extends Task {
         endTime = latest;
     }
 
-    @Override public Duration getDuration() {
-
+    @Override
+    public Duration getDuration() {
         return duration;
     }
 
-    @Override public LocalDateTime getStartTime() {
+    @Override
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
