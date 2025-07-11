@@ -1,27 +1,15 @@
 package manager;
 
+import model.Epic;
+import model.Subtask;
 import model.Task;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private static class Node {
-        Task task;
-        Node next;
-        Node prev;
 
-        Node(Task task, Node prev, Node next) {
-            this.task = task;
-            this.prev = prev;
-            this.next = next;
-        }
-    }
-
-    private final Map<Integer, Node> historyMap = new HashMap<>();
-    private Node head;
-    private Node tail;
+    private final CustomLinkedList<Task> history = new CustomLinkedList<>();
+    private final Map<Integer, Node<Task>> nodeMap = new HashMap<>();
 
     @Override
     public void add(Task task) {
@@ -30,55 +18,88 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         remove(task.getId());
-        linkLast(task);
+
+        Task taskCopy;
+        if (task instanceof Epic) {
+            taskCopy = new Epic((Epic) task);
+        } else if (task instanceof Subtask) {
+            taskCopy = new Subtask((Subtask) task);
+        } else {
+            taskCopy = new Task(task);
+        }
+
+        linkLast(taskCopy);
+    }
+
+
+    @Override
+    public List<Task> getHistory() {
+        return history.getTasks();
     }
 
     @Override
     public void remove(int id) {
-        Node node = historyMap.get(id);
+        Node<Task> node = nodeMap.remove(id);
         if (node != null) {
-            removeNode(node);
-            historyMap.remove(id);
+            history.removeNode(node);
         }
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        List<Task> history = new ArrayList<>();
-        Node current = head;
-        while (current != null) {
-            history.add(current.task);
-            current = current.next;
-        }
-        return history;
     }
 
     private void linkLast(Task task) {
-        final Node newNode = new Node(task, tail, null);
-        if (tail == null) {
-            head = newNode;
-        } else {
-            tail.next = newNode;
-        }
-        tail = newNode;
-        historyMap.put(task.getId(), newNode);
+        Node<Task> newNode = history.linkLast(task);
+        nodeMap.put(task.getId(), newNode);
     }
 
-    private void removeNode(Node node) {
-        if (node == null) {
-            return;
+    private static class CustomLinkedList<T> {
+        private Node<T> head;
+        private Node<T> tail;
+
+        void removeNode(Node<T> node) {
+            if (node == null) return;
+
+            if (node.prev != null) {
+                node.prev.next = node.next;
+            } else {
+                head = node.next;
+            }
+            if (node.next != null) {
+                node.next.prev = node.prev;
+            } else {
+                tail = node.prev;
+            }
         }
 
-        if (node.prev != null) {
-            node.prev.next = node.next;
-        } else {
-            head = node.next;
+        Node<T> linkLast(T element) {
+            Node<T> node = new Node<>(tail, element, null);
+            if (tail != null) {
+                tail.next = node;
+            } else {
+                head = node;
+            }
+            tail = node;
+            return node;
         }
 
-        if (node.next != null) {
-            node.next.prev = node.prev;
-        } else {
-            tail = node.prev;
+        List<T> getTasks() {
+            List<T> list = new ArrayList<>();
+            Node<T> current = head;
+            while (current != null) {
+                list.add(current.data);
+                current = current.next;
+            }
+            return list;
+        }
+    }
+
+    private static class Node<T> {
+        T data;
+        Node<T> prev;
+        Node<T> next;
+
+        Node(Node<T> prev, T data, Node<T> next) {
+            this.prev = prev;
+            this.data = data;
+            this.next = next;
         }
     }
 }
