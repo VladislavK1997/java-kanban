@@ -29,8 +29,9 @@ public class HttpTaskServer {
     private final Gson gson;
 
     public HttpTaskServer() throws IOException {
-        this(new FileBackedTaskManager(new File("tasks.csv"))); // или InMemoryTaskManager
+        this(new FileBackedTaskManager(new File("tasks.csv")));
     }
+
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.taskManager = taskManager;
         this.gson = getGson();
@@ -43,6 +44,7 @@ public class HttpTaskServer {
         server.createContext("/tasks/prioritized", this::handlePrioritized);
 
     }
+
     public void start() {
         server.start();
         System.out.println("HTTP server started on port " + PORT);
@@ -52,6 +54,7 @@ public class HttpTaskServer {
         server.stop(0);
         System.out.println("HTTP server stopped");
     }
+
     private void handleTasks(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
         String query = exchange.getRequestURI().getQuery();
