@@ -52,7 +52,7 @@ public class HttpTaskManagerTasksTest {
     @Order(2)
     void shouldGetTaskById() throws IOException, InterruptedException {
         Task task = new Task(0, "Another Task", "Desc", TaskStatus.NEW,
-                Duration.ofMinutes(15), LocalDateTime.now());
+                Duration.ofMinutes(15), LocalDateTime.now().plusMinutes(45)); // Сдвиг на 45 минут
 
         Task created = createTask(task);
         Task fetched = fetchTaskById(created.getId());
